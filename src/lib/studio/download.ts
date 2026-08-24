@@ -1,3 +1,5 @@
+import type { ExportTarget } from "./types";
+
 function triggerDownload(url: string, filename: string) {
   const a = document.createElement("a");
   a.href = url;
@@ -7,7 +9,13 @@ function triggerDownload(url: string, filename: string) {
   a.remove();
 }
 
-/** Upscale a data-URL image so its longest edge reaches `targetLongEdge` px (2K = 2560). */
+/** Cạnh dài mục tiêu cho từng mức xuất bản (2K = 2560px, 4K = 3840px). */
+export const EXPORT_TARGET_PX: Record<Exclude<ExportTarget, "original">, number> = {
+  "2k": 2560,
+  "4k": 3840,
+};
+
+/** Upscale a data-URL image so its longest edge reaches `targetLongEdge` px. */
 async function upscale(dataUrl: string, targetLongEdge: number): Promise<string> {
   const img = new Image();
   img.src = dataUrl;
@@ -26,8 +34,8 @@ async function upscale(dataUrl: string, targetLongEdge: number): Promise<string>
   return canvas.toDataURL("image/png");
 }
 
-export async function downloadImage(dataUrl: string, filename: string, to2k: boolean) {
-  const url = to2k ? await upscale(dataUrl, 2560) : dataUrl;
+export async function downloadImage(dataUrl: string, filename: string, target: ExportTarget) {
+  const url = target === "original" ? dataUrl : await upscale(dataUrl, EXPORT_TARGET_PX[target]);
   triggerDownload(url, filename);
 }
 

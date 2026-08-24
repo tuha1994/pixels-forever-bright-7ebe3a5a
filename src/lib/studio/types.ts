@@ -12,11 +12,14 @@ export type ReferenceImage = {
   previewUrl: string;
 };
 
+/** Độ phân giải xuất bản khi tải ảnh xuống (upscale tại trình duyệt). */
+export type ExportTarget = "original" | "2k" | "4k";
+
 export type ImageSettings = {
   model: string;
   aspect: "16:9" | "1:1" | "9:16";
   quality: "low" | "medium" | "high";
-  upscale2k: boolean;
+  exportRes: ExportTarget;
 };
 
 export type VideoSettings = {
@@ -53,11 +56,17 @@ export const ASPECT_TO_SIZE: Record<ImageSettings["aspect"], string> = {
   "9:16": "1024x1536",
 };
 
+export const EXPORT_RES_LABELS: Record<ExportTarget, string> = {
+  original: "Gốc",
+  "2k": "2K",
+  "4k": "4K",
+};
+
 export const DEFAULT_IMAGE_SETTINGS: ImageSettings = {
   model: "openai/gpt-image-2",
   aspect: "16:9",
   quality: "high",
-  upscale2k: true,
+  exportRes: "2k",
 };
 
 export const DEFAULT_VIDEO_SETTINGS: VideoSettings = {

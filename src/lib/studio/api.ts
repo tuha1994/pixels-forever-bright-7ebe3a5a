@@ -112,7 +112,7 @@ export async function generateVideo(
   references: ReferenceImage[],
   onProgress: (progress: number, message: string) => void,
   signal: AbortSignal,
-): Promise<string> {
+): Promise<Blob> {
   const first = references[0];
   const createRes = await fetch("/api/video/create", {
     method: "POST",
@@ -150,8 +150,7 @@ export async function generateVideo(
       onProgress(92, "Đang tải video về…");
       const contentRes = await fetch(`/api/video/content?id=${created.id}`, { signal });
       if (!contentRes.ok) throw new Error("Không tải được video đã tạo");
-      const blob = await contentRes.blob();
-      return URL.createObjectURL(blob);
+      return await contentRes.blob();
     }
     onProgress(Math.min(88, 8 + (job.progress ?? i * 4)), "Đang dựng video…");
   }

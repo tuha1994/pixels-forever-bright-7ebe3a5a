@@ -47,12 +47,13 @@ export function useStudioQueue() {
           } else if (s.kind === "image" && s.resultData) {
             resultUrl = s.resultData;
           }
+          const message = interrupted ? "Bị gián đoạn khi tải lại trang" : s.message;
           const job: Job = {
             ...s,
             status: interrupted ? "canceled" : s.status,
-            message: interrupted ? "Bị gián đoạn khi tải lại trang" : s.message,
-            resultUrl,
             previewUrl: "",
+            ...(message !== undefined ? { message } : {}),
+            ...(resultUrl !== undefined ? { resultUrl } : {}),
           };
           persistedRef.current.set(job.id, signatureOf(job));
           return job;
